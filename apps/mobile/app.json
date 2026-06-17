@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Claro Fullstack Challenge",
+    "slug": "claro-fullstack-challenge",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "scheme": "claro-fullstack-challenge",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router",
+      "expo-asset"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "ios": {
+      "bundleIdentifier": "com.anonymous.claro-fullstack-challenge"
+    }
+  }
+}
