@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException
 } from "@nestjs/common";
-import { TasksRepository } from "./tasks.repository";
+import { TasksRepository } from "@/modules/tasks/tasks.repository";
 import {
   CreateTaskInput,
   ListTasksQuery,
@@ -11,7 +11,7 @@ import {
   TaskWithTeams,
   UpdateTaskInput,
   UpdateTaskStatusInput
-} from "./types/task.types";
+} from "@/modules/tasks/types/task.types";
 
 @Injectable()
 export class TasksService {

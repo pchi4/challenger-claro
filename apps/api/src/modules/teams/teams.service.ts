@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { TeamsRepository } from "./teams.repository";
+import { TeamsRepository } from "@/modules/teams/teams.repository";
 import {
   CreateTeamInput,
   ListTeamsQuery,
   ListTeamsResult,
   TeamEntity,
   UpdateTeamInput
-} from "./types/team.types";
+} from "@/modules/teams/types/team.types";
 
 @Injectable()
 export class TeamsService {

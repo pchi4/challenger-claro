@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { taskStatuses } from "../types/task.types";
+import { taskStatuses } from "@/modules/tasks/types/task.types";
 
 const optionalTextSchema = z
   .string()

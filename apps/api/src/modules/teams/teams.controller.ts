@@ -8,9 +8,9 @@ import {
   Put,
   Query
 } from "@nestjs/common";
-import { ApiResponse } from "../../common/types/api-response";
-import { createSuccessResponse } from "../../common/utils/response-envelope";
-import { ZodValidationPipe } from "../../common/pipes/zod-validation.pipe";
+import { ApiResponse } from "@/common/types/api-response";
+import { createSuccessResponse } from "@/common/utils/response-envelope";
+import { ZodValidationPipe } from "@/common/pipes/zod-validation.pipe";
 import {
   CreateTeamSchema,
   ListTeamsQuerySchema,
@@ -20,9 +20,9 @@ import {
   listTeamsQuerySchema,
   teamIdParamSchema,
   updateTeamSchema
-} from "./schemas/team.schemas";
-import { TeamsService } from "./teams.service";
-import { TeamEntity } from "./types/team.types";
+} from "@/modules/teams/schemas/team.schemas";
+import { TeamsService } from "@/modules/teams/teams.service";
+import { TeamEntity } from "@/modules/teams/types/team.types";
 
 @Controller("teams")
 export class TeamsController {

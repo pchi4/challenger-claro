@@ -2,7 +2,7 @@ import {
   ApiErrorResponse,
   ApiResponse,
   PaginationMeta
-} from "../types/api-response";
+} from "@/common/types/api-response";
 
 export function createSuccessResponse<T>(
   data: T,

@@ -7,12 +7,12 @@ import {
 } from "@nestjs/common";
 import { Response } from "express";
 import { ZodError } from "zod";
-import { ApiErrorResponse } from "../types/api-response";
-import { createErrorResponse } from "../utils/response-envelope";
+import { ApiErrorResponse } from "@/common/types/api-response";
+import { createErrorResponse } from "@/common/utils/response-envelope";
 import {
   ZodValidationException,
   formatZodError
-} from "../pipes/zod-validation.pipe";
+} from "@/common/pipes/zod-validation.pipe";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {

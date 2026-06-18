@@ -5,8 +5,8 @@ import {
   PipeTransform
 } from "@nestjs/common";
 import { ZodError, ZodIssue, ZodTypeAny } from "zod";
-import { ApiErrorResponse } from "../types/api-response";
-import { createErrorResponse } from "../utils/response-envelope";
+import { ApiErrorResponse } from "@/common/types/api-response";
+import { createErrorResponse } from "@/common/utils/response-envelope";
 
 @Injectable()
 export class ZodValidationPipe<TInput = unknown, TOutput = unknown>

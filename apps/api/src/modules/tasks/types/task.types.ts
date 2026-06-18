@@ -1,5 +1,5 @@
 import { Task, Team } from "@prisma/client";
-import { PaginationMeta } from "../../../common/types/api-response";
+import { PaginationMeta } from "@/common/types/api-response";
 
 export const taskStatuses = ["PENDING", "IN_PROGRESS", "DONE"] as const;
 

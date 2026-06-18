@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, Team } from "@prisma/client";
-import { PrismaService } from "../prisma/prisma.service";
+import { PrismaService } from "@/modules/prisma/prisma.service";
 import {
   CreateTeamInput,
   ListTeamsQuery,
   UpdateTeamInput
-} from "./types/team.types";
+} from "@/modules/teams/types/team.types";
 
 @Injectable()
 export class TeamsRepository {

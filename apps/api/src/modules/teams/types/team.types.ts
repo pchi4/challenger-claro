@@ -1,5 +1,5 @@
 import { Team } from "@prisma/client";
-import { PaginationMeta } from "../../../common/types/api-response";
+import { PaginationMeta } from "@/common/types/api-response";
 
 export type TeamEntity = Team;
 

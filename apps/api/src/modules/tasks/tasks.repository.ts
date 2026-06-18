@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, Task } from "@prisma/client";
-import { PrismaService } from "../prisma/prisma.service";
+import { PrismaService } from "@/modules/prisma/prisma.service";
 import {
   CreateTaskInput,
   ListTasksQuery,
@@ -8,7 +8,7 @@ import {
   TaskStatus,
   TaskWithTeams,
   UpdateTaskInput
-} from "./types/task.types";
+} from "@/modules/tasks/types/task.types";
 
 const taskWithTeamsInclude = {
   teams: {

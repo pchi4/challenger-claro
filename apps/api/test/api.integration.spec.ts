@@ -1,9 +1,9 @@
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import request = require("supertest");
-import { AppModule } from "../src/app.module";
-import { GlobalExceptionFilter } from "../src/common/filters/global-exception.filter";
-import { PrismaService } from "../src/modules/prisma/prisma.service";
+import { AppModule } from "@/app.module";
+import { GlobalExceptionFilter } from "@/common/filters/global-exception.filter";
+import { PrismaService } from "@/modules/prisma/prisma.service";
 
 const TaskStatus = {
   PENDING: "PENDING",

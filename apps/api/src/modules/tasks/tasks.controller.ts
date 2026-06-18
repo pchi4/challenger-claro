@@ -9,9 +9,9 @@ import {
   Put,
   Query
 } from "@nestjs/common";
-import { ApiResponse } from "../../common/types/api-response";
-import { createSuccessResponse } from "../../common/utils/response-envelope";
-import { ZodValidationPipe } from "../../common/pipes/zod-validation.pipe";
+import { ApiResponse } from "@/common/types/api-response";
+import { createSuccessResponse } from "@/common/utils/response-envelope";
+import { ZodValidationPipe } from "@/common/pipes/zod-validation.pipe";
 import {
   CreateTaskSchema,
   ListTasksQuerySchema,
@@ -23,9 +23,9 @@ import {
   taskIdParamSchema,
   updateTaskSchema,
   updateTaskStatusSchema
-} from "./schemas/task.schemas";
-import { TasksService } from "./tasks.service";
-import { TaskWithTeams } from "./types/task.types";
+} from "@/modules/tasks/schemas/task.schemas";
+import { TasksService } from "@/modules/tasks/tasks.service";
+import { TaskWithTeams } from "@/modules/tasks/types/task.types";
 
 @Controller("tasks")
 export class TasksController {
