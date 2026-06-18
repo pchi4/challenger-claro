@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
-import { colors, spacing } from "../theme";
+import { colors, spacing } from "@/shared/theme";
 
 interface AppTopBarProps {
   showBack?: boolean;
@@ -29,7 +29,7 @@ export function AppTopBar({
       ) : (
         <View style={styles.iconButton} />
       )}
-      {onDelete !== undefined ? (
+      {onDelete ? (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Deletar"

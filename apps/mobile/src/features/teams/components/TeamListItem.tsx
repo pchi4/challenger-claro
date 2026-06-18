@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { colors, radius, spacing, typography } from "../../../shared/theme";
-import { Team } from "../types/team.types";
+import { colors, radius, spacing, typography } from "@/shared/theme";
+import { Team } from "@/features/teams/types/team.types";
 
 interface TeamListItemProps {
   team: Team;
@@ -23,7 +23,9 @@ export function TeamListItem({
           <Ionicons name="people" size={34} color={team.colorHex} />
           <Text style={styles.teamName}>{team.name}</Text>
         </View>
-        <Ionicons name="chevron-forward" size={28} color={colors.white} />
+        <View style={styles.actions}>
+          <Ionicons name="chevron-forward" size={28} color={colors.white} />
+        </View>
       </View>
       {team.description !== undefined && team.description !== null ? (
         <Text style={styles.teamDescription}>{team.description}</Text>
@@ -51,6 +53,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md
+  },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm
   },
   teamName: {
     color: colors.text,

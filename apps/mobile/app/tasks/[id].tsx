@@ -1,4 +1,4 @@
-import { TaskDetailsScreen } from "../../src/features/tasks/screens/TaskDetailsScreen";
+import { TaskDetailsScreen } from "@/features/tasks/screens/TaskDetailsScreen";
 
 export default function TaskDetailsRoute(): React.JSX.Element {
   return <TaskDetailsScreen />;

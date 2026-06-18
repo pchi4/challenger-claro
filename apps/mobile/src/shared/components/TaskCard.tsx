@@ -1,9 +1,9 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Task } from "../../features/tasks/types/task.types";
-import { formatDatePtBr } from "../utils/formatDate";
-import { colors, radius, spacing, typography } from "../theme";
-import { StatusChip } from "./StatusChip";
-import { TeamChip } from "./TeamChip";
+import { Task } from "@/features/tasks/types/task.types";
+import { formatDatePtBr } from "@/shared/utils/formatDate";
+import { colors, radius, spacing, typography } from "@/shared/theme";
+import { StatusChip } from "@/shared/components/StatusChip";
+import { TeamChip } from "@/shared/components/TeamChip";
 
 interface TaskCardProps {
   task: Task;

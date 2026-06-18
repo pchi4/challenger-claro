@@ -1,5 +1,5 @@
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { colors, spacing } from "../theme";
+import { colors, spacing } from "@/shared/theme";
 
 export function AppLoadingState(): React.JSX.Element {
   return (

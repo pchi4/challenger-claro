@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import { EditTaskScreen } from "../../../src/features/tasks/screens/EditTaskScreen";
+import { EditTaskScreen } from "@/features/tasks/screens/EditTaskScreen";
 
 export default function EditTaskRoute(): React.JSX.Element {
   const { id } = useLocalSearchParams<{ id: string }>();

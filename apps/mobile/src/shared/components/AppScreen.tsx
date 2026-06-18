@@ -1,12 +1,7 @@
 import { PropsWithChildren } from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  ViewStyle,
-  StyleProp
-} from "react-native";
-import { colors, spacing } from "../theme";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { colors, spacing } from "@/shared/theme";
 
 interface AppScreenProps extends PropsWithChildren {
   style?: StyleProp<ViewStyle>;

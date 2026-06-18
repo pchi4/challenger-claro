@@ -1,19 +1,29 @@
-import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import {
   AppErrorState,
-  AppHeader,
+  AppFormScreenHeader,
   AppLoadingState,
   AppScreen,
   AppTopBar
-} from "../../../shared/components";
-import { colors, spacing } from "../../../shared/theme";
-import { TaskForm } from "../components/TaskForm";
-import { useTaskForm } from "../hooks/useTaskForm";
+} from "@/shared/components";
+import { TeamFilterBanner } from "@/features/tasks/components/TeamFilterBanner";
+import { spacing } from "@/shared/theme";
+import { TaskForm } from "@/features/tasks/components/TaskForm";
+import { useTaskForm } from "@/features/tasks/hooks/useTaskForm";
 
 export function CreateTaskScreen(): React.JSX.Element {
+  const router = useRouter();
+  const params = useLocalSearchParams<{
+    teamId?: string | string[];
+    teamName?: string | string[];
+  }>();
+  const contextTeamId = normalizeParam(params.teamId);
+  const contextTeamName = normalizeParam(params.teamName);
   const form = useTaskForm({
-    mode: "create"
+    mode: "create",
+    contextTeamId,
+    contextTeamName
   });
 
   if (form.isLoading) {
@@ -36,12 +46,31 @@ export function CreateTaskScreen(): React.JSX.Element {
     <AppScreen>
       <AppTopBar />
       <View style={styles.hero}>
-        <Ionicons name="checkbox-outline" size={62} color={colors.primary} />
-        <AppHeader
+        <AppFormScreenHeader
+          badgeLabel="Nova"
+          icon="checkbox-outline"
           title="Nova tarefa"
-          subtitle="crie seu time para gerenciar as tarefas"
+          subtitle="Crie uma tarefa e organize prazo, status e times em um unico fluxo."
         />
       </View>
+      {form.contextTeamName ? (
+        <View style={styles.contextBanner}>
+          <TeamFilterBanner
+            teamLabel={form.contextTeamName}
+            label="Voce esta criando no time"
+            actionLabel="Ver tarefas"
+            onClear={() =>
+              router.push({
+                pathname: "/tasks",
+                params: {
+                  teamId: form.contextTeamId,
+                  teamName: form.contextTeamName
+                }
+              })
+            }
+          />
+        </View>
+      ) : null}
       <TaskForm
         control={form.control}
         errors={form.errors}
@@ -58,9 +87,18 @@ export function CreateTaskScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   hero: {
-    alignItems: "center",
-    gap: spacing.md,
     marginTop: spacing.xl,
     marginBottom: spacing.lg
+  },
+  contextBanner: {
+    marginBottom: spacing.md
   }
 });
+
+function normalizeParam(value: string | string[] | undefined): string | undefined {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+
+  return value;
+}

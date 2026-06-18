@@ -1,4 +1,4 @@
-import { GetTeamsParams } from "../types/team.types";
+import { GetTeamsParams } from "@/features/teams/types/team.types";
 
 export const teamQueryKeys = {
   all: ["teams"] as const,

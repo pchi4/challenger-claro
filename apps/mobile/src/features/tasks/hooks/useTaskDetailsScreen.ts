@@ -1,17 +1,23 @@
 import { useMemo } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { formatDatePtBr } from "../../../shared/utils/formatDate";
-import { TaskStatus } from "../types/task.types";
-import { useDeleteTask } from "./useDeleteTask";
-import { useTask } from "./useTask";
-import { useUpdateTaskStatus } from "./useUpdateTaskStatus";
+import { formatDatePtBr } from "@/shared/utils/formatDate";
+import { TaskStatus } from "@/features/tasks/types/task.types";
+import { useDeleteTask } from "@/features/tasks/hooks/useDeleteTask";
+import { useTask } from "@/features/tasks/hooks/useTask";
+import { useUpdateTaskStatus } from "@/features/tasks/hooks/useUpdateTaskStatus";
 
 const statusOptions: TaskStatus[] = ["PENDING", "IN_PROGRESS", "DONE"];
 
 export function useTaskDetailsScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const params = useLocalSearchParams<{
+    id?: string | string[];
+    teamId?: string | string[];
+    teamName?: string | string[];
+  }>();
   const taskId = normalizeParam(params.id) ?? "";
+  const contextTeamId = normalizeParam(params.teamId);
+  const contextTeamName = normalizeParam(params.teamName);
   const taskQuery = useTask(taskId);
   const updateTaskStatusMutation = useUpdateTaskStatus();
   const deleteTaskMutation = useDeleteTask();
@@ -42,11 +48,13 @@ export function useTaskDetailsScreen() {
     }
 
     router.push({
-      pathname: "/tasks/[id]/edit",
-      params: {
-        id: taskId
-      }
-    });
+        pathname: "/tasks/[id]/edit",
+        params: {
+          id: taskId,
+          teamId: contextTeamId,
+          teamName: contextTeamName
+        }
+      });
   }
 
   async function handleDelete(): Promise<void> {
@@ -55,12 +63,30 @@ export function useTaskDetailsScreen() {
     }
 
     await deleteTaskMutation.mutateAsync(taskId);
-    router.replace("/tasks");
+    router.replace({
+      pathname: "/tasks",
+      params: {
+        teamId: contextTeamId,
+        teamName: contextTeamName
+      }
+    });
+  }
+
+  function handleBackToTeamTasks(): void {
+    router.push({
+      pathname: "/tasks",
+      params: {
+        teamId: contextTeamId,
+        teamName: contextTeamName
+      }
+    });
   }
 
   return {
     task,
     taskId,
+    contextTeamId,
+    contextTeamName,
     statusOptions,
     formattedDueDate,
     isLoading: taskQuery.isLoading,
@@ -87,7 +113,8 @@ export function useTaskDetailsScreen() {
     retry: taskQuery.refetch,
     handleStatusChange,
     handleEdit,
-    handleDelete
+    handleDelete,
+    handleBackToTeamTasks
   };
 }
 

@@ -10,16 +10,11 @@ import {
   AppTopBar,
   StatusChip,
   TeamChip
-} from "../../../shared/components";
-import { colors, radius, spacing, typography } from "../../../shared/theme";
-import { TaskStatus } from "../types/task.types";
-import { useTaskDetailsScreen } from "../hooks/useTaskDetailsScreen";
-
-const statusLabels: Record<TaskStatus, string> = {
-  PENDING: "Pendente",
-  IN_PROGRESS: "Em progresso",
-  DONE: "Concluída"
-};
+} from "@/shared/components";
+import { TeamFilterBanner } from "@/features/tasks/components/TeamFilterBanner";
+import { colors, radius, spacing, typography } from "@/shared/theme";
+import { TaskDetailsStatusSection } from "@/features/tasks/components/TaskDetailsStatusSection";
+import { useTaskDetailsScreen } from "@/features/tasks/hooks/useTaskDetailsScreen";
 
 export function TaskDetailsScreen(): React.JSX.Element {
   const screen = useTaskDetailsScreen();
@@ -56,22 +51,35 @@ export function TaskDetailsScreen(): React.JSX.Element {
     );
   }
 
+  const task = screen.task;
+
   return (
     <AppScreen contentStyle={styles.screenContent}>
       <View style={styles.topBar}>
         <AppTopBar />
       </View>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         <AppHeader
           title="Detalhe da tarefa"
           subtitle="Acompanhe status, prazo e times vinculados."
         />
-        {screen.feedbackMessage !== undefined ? (
+        {screen.contextTeamName ? (
+          <TeamFilterBanner
+            teamLabel={screen.contextTeamName}
+            label="Voce esta navegando no time"
+            actionLabel="Ver tarefas"
+            onClear={screen.handleBackToTeamTasks}
+          />
+        ) : null}
+        {screen.feedbackMessage === undefined ? null : (
           <AppFeedback
             message={screen.feedbackMessage}
             variant={screen.feedbackVariant}
           />
-        ) : null}
+        )}
         <View style={styles.header}>
           <View style={styles.titleGroup}>
             <Text style={styles.title}>{screen.task.title}</Text>
@@ -111,28 +119,13 @@ export function TaskDetailsScreen(): React.JSX.Element {
           )}
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Alterar status</Text>
-          <View style={styles.statusActions}>
-            {screen.statusOptions.map((status) => (
-              <AppButton
-                key={status}
-                title={statusLabels[status]}
-                variant={status === "DONE" ? "primary" : "secondary"}
-                disabled={
-                  screen.task?.status === status ||
-                  screen.isUpdatingStatus ||
-                  screen.isDeleting
-                }
-                loading={
-                  screen.isUpdatingStatus && screen.task?.status !== status
-                }
-                style={styles.statusButton}
-                onPress={() => screen.handleStatusChange(status)}
-              />
-            ))}
-          </View>
-        </View>
+        <TaskDetailsStatusSection
+          currentStatus={task.status}
+          isDeleting={screen.isDeleting}
+          isUpdatingStatus={screen.isUpdatingStatus}
+          statusOptions={screen.statusOptions}
+          onChange={screen.handleStatusChange}
+        />
 
         <View style={styles.actions}>
           <AppButton
@@ -230,12 +223,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: spacing.sm
-  },
-  statusActions: {
-    gap: spacing.sm
-  },
-  statusButton: {
-    minHeight: 44
   },
   actions: {
     gap: spacing.sm

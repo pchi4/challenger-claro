@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
-import { TaskStatus } from "../../features/tasks/types/task.types";
-import { colors, radius, spacing, typography } from "../theme";
+import { TaskStatus } from "@/features/tasks/types/task.types";
+import { colors, radius, spacing, typography } from "@/shared/theme";
 
 interface StatusChipProps {
   status: TaskStatus;

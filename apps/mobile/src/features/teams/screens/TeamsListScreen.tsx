@@ -3,12 +3,12 @@ import {
   AppButton,
   AppEmptyState,
   AppScreen
-} from "../../../shared/components";
-import { spacing } from "../../../shared/theme";
-import { TeamListItem } from "../components/TeamListItem";
-import { TeamsListFooter } from "../components/TeamsListFooter";
-import { TeamsListHeader } from "../components/TeamsListHeader";
-import { useTeamsListScreen } from "../hooks/useTeamsListScreen";
+} from "@/shared/components";
+import { spacing } from "@/shared/theme";
+import { TeamListItem } from "@/features/teams/components/TeamListItem";
+import { TeamsListFooter } from "@/features/teams/components/TeamsListFooter";
+import { TeamsListHeader } from "@/features/teams/components/TeamsListHeader";
+import { useTeamsListScreen } from "@/features/teams/hooks/useTeamsListScreen";
 
 export function TeamsListScreen(): React.JSX.Element {
   const screen = useTeamsListScreen();
@@ -18,12 +18,14 @@ export function TeamsListScreen(): React.JSX.Element {
       <FlatList
         data={screen.teams}
         keyExtractor={(team) => team.id}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <TeamsListHeader
             total={screen.total}
             search={screen.search}
             onSearchChange={screen.handleSearchChange}
+            onViewAllTasks={screen.handleViewAllTasks}
           />
         }
         renderItem={({ item }) => (

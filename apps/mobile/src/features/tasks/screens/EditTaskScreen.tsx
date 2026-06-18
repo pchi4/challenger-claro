@@ -1,15 +1,16 @@
-import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import {
+  AppFormScreenHeader,
   AppErrorState,
-  AppHeader,
   AppLoadingState,
   AppScreen,
   AppTopBar
-} from "../../../shared/components";
-import { colors, spacing } from "../../../shared/theme";
-import { TaskForm } from "../components/TaskForm";
-import { useTaskForm } from "../hooks/useTaskForm";
+} from "@/shared/components";
+import { TeamFilterBanner } from "@/features/tasks/components/TeamFilterBanner";
+import { spacing } from "@/shared/theme";
+import { TaskForm } from "@/features/tasks/components/TaskForm";
+import { useTaskForm } from "@/features/tasks/hooks/useTaskForm";
 
 interface EditTaskScreenProps {
   taskId: string;
@@ -18,9 +19,18 @@ interface EditTaskScreenProps {
 export function EditTaskScreen({
   taskId
 }: EditTaskScreenProps): React.JSX.Element {
+  const router = useRouter();
+  const params = useLocalSearchParams<{
+    teamId?: string | string[];
+    teamName?: string | string[];
+  }>();
+  const contextTeamId = normalizeParam(params.teamId);
+  const contextTeamName = normalizeParam(params.teamName);
   const form = useTaskForm({
     mode: "edit",
-    taskId
+    taskId,
+    contextTeamId,
+    contextTeamName
   });
 
   if (form.isLoading) {
@@ -43,12 +53,32 @@ export function EditTaskScreen({
     <AppScreen>
       <AppTopBar />
       <View style={styles.hero}>
-        <Ionicons name="checkbox-outline" size={62} color={colors.primary} />
-        <AppHeader
+        <AppFormScreenHeader
+          badgeLabel="Edicao"
+          icon="create-outline"
           title="Editar tarefa"
-          subtitle="crie seu time para gerenciar as tarefas"
+          subtitle="Atualize prazo, status e times com a mesma hierarquia visual das outras telas."
+          centered={false}
         />
       </View>
+      {form.contextTeamName ? (
+        <View style={styles.contextBanner}>
+          <TeamFilterBanner
+            teamLabel={form.contextTeamName}
+            label="Voce esta editando no time"
+            actionLabel="Ver tarefas"
+            onClear={() =>
+              router.push({
+                pathname: "/tasks",
+                params: {
+                  teamId: form.contextTeamId,
+                  teamName: form.contextTeamName
+                }
+              })
+            }
+          />
+        </View>
+      ) : null}
       <TaskForm
         control={form.control}
         errors={form.errors}
@@ -65,9 +95,18 @@ export function EditTaskScreen({
 
 const styles = StyleSheet.create({
   hero: {
-    alignItems: "center",
-    gap: spacing.md,
-    marginTop: spacing.xl,
+    marginTop: spacing.md,
     marginBottom: spacing.lg
+  },
+  contextBanner: {
+    marginBottom: spacing.md
   }
 });
+
+function normalizeParam(value: string | string[] | undefined): string | undefined {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+
+  return value;
+}

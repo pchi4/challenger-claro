@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { colors, radius, spacing, typography } from "../theme";
+import { colors, radius, spacing, typography } from "@/shared/theme";
 
 type AppFeedbackVariant = "success" | "error" | "info";
 

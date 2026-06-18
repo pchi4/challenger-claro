@@ -1,14 +1,15 @@
 import { FlatList, StyleSheet, View } from "react-native";
 import {
-  AppButton,
   AppEmptyState,
+  AppFloatingButton,
+  AppLoadingState,
   AppScreen,
   TaskCard
-} from "../../../shared/components";
-import { spacing } from "../../../shared/theme";
-import { TasksListFooter } from "../components/TasksListFooter";
-import { TasksListHeader } from "../components/TasksListHeader";
-import { useTasksListScreen } from "../hooks/useTasksListScreen";
+} from "@/shared/components";
+import { spacing } from "@/shared/theme";
+import { TasksListFooter } from "@/features/tasks/components/TasksListFooter";
+import { TasksListHeader } from "@/features/tasks/components/TasksListHeader";
+import { useTasksListScreen } from "@/features/tasks/hooks/useTasksListScreen";
 
 export function TasksListScreen(): React.JSX.Element {
   const screen = useTasksListScreen();
@@ -18,7 +19,12 @@ export function TasksListScreen(): React.JSX.Element {
       <FlatList
         data={screen.tasks}
         keyExtractor={(task) => task.id}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
+        onEndReached={() => {
+          screen.handleLoadMore();
+        }}
+        onEndReachedThreshold={0.35}
         ListHeaderComponent={
           <TasksListHeader
             total={screen.total}
@@ -50,26 +56,24 @@ export function TasksListScreen(): React.JSX.Element {
           )
         }
         ListFooterComponent={
-          <>
-            <TasksListFooter
-              isLoading={screen.isLoading}
-              isFetching={screen.isFetching}
-              isError={screen.isError}
-              errorMessage={screen.errorMessage}
-              canLoadMore={screen.canLoadMore}
-              onLoadMore={screen.handleLoadMore}
-              onRetry={() => {
-                void screen.retry();
-              }}
-            />
-            <View style={styles.cta}>
-              <AppButton
-                title="Nova Tarefa"
-                onPress={screen.handleCreateTask}
-              />
-            </View>
-          </>
+          <TasksListFooter
+            isLoading={screen.isLoading}
+            isFetching={screen.isFetching}
+            isError={screen.isError}
+            errorMessage={screen.errorMessage}
+            totalLoaded={screen.tasks.length}
+            total={screen.total}
+            canLoadMore={screen.canLoadMore}
+            onRetry={() => {
+              void screen.retry();
+            }}
+          />
         }
+      />
+      <AppFloatingButton
+        label="Nova tarefa"
+        icon="add"
+        onPress={screen.handleCreateTask}
       />
     </AppScreen>
   );
@@ -83,12 +87,9 @@ const styles = StyleSheet.create({
   listContent: {
     flexGrow: 1,
     paddingTop: spacing.xxl,
-    paddingBottom: spacing.xl
+    paddingBottom: spacing.xxl * 3
   },
   separator: {
     height: spacing.md
-  },
-  cta: {
-    marginTop: spacing.xl
   }
 });

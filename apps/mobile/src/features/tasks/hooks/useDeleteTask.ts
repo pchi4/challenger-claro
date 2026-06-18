@@ -3,9 +3,9 @@ import {
   useQueryClient,
   UseMutationResult
 } from "@tanstack/react-query";
-import { ApiResponse } from "../../../shared/types/api";
-import { deleteTask } from "../api/tasksApi";
-import { taskQueryKeys } from "../constants/taskQueryKeys";
+import { ApiResponse } from "@/shared/types/api";
+import { taskQueryKeys } from "@/features/tasks/constants/taskQueryKeys";
+import { deleteTaskWithOffline } from "@/shared/offline/offlineApi";
 
 export function useDeleteTask(): UseMutationResult<
   ApiResponse<null>,
@@ -15,7 +15,7 @@ export function useDeleteTask(): UseMutationResult<
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: deleteTask,
+    mutationFn: deleteTaskWithOffline,
     onSuccess: (_response, id) => {
       void queryClient.removeQueries({
         queryKey: taskQueryKeys.detail(id)

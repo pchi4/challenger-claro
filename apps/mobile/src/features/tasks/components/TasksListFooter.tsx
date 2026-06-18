@@ -1,18 +1,15 @@
-import { StyleSheet, View } from "react-native";
-import {
-  AppButton,
-  AppErrorState,
-  AppLoadingState
-} from "../../../shared/components";
-import { spacing } from "../../../shared/theme";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { AppErrorState, AppLoadingState } from "@/shared/components";
+import { colors, spacing, typography } from "@/shared/theme";
 
 interface TasksListFooterProps {
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
   errorMessage: string;
+  totalLoaded: number;
+  total: number;
   canLoadMore: boolean;
-  onLoadMore: () => void;
   onRetry: () => void;
 }
 
@@ -21,8 +18,9 @@ export function TasksListFooter({
   isFetching,
   isError,
   errorMessage,
+  totalLoaded,
+  total,
   canLoadMore,
-  onLoadMore,
   onRetry
 }: TasksListFooterProps): React.JSX.Element | null {
   if (isLoading) {
@@ -33,24 +31,48 @@ export function TasksListFooter({
     return <AppErrorState message={errorMessage} retry={onRetry} />;
   }
 
-  if (!canLoadMore) {
+  if (totalLoaded === 0) {
     return null;
   }
 
   return (
     <View style={styles.footer}>
-      <AppButton
-        title="Carregar mais"
-        variant="secondary"
-        loading={isFetching}
-        onPress={onLoadMore}
-      />
+      <Text style={styles.statusText}>
+        {canLoadMore
+          ? `Mostrando ${totalLoaded} de ${total} tarefas`
+          : `${totalLoaded} tarefas carregadas`}
+      </Text>
+      {isFetching && canLoadMore ? (
+        <View style={styles.loadingRow}>
+          <ActivityIndicator color={colors.primary} />
+          <Text style={styles.loadingText}>Carregando mais tarefas...</Text>
+        </View>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   footer: {
-    paddingTop: spacing.lg
+    alignItems: "center",
+    gap: spacing.sm,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md
+  },
+  statusText: {
+    color: colors.muted,
+    fontSize: typography.size.sm,
+    fontWeight: "700",
+    textAlign: "center"
+  },
+  loadingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm
+  },
+  loadingText: {
+    color: colors.text,
+    fontSize: typography.size.sm,
+    fontWeight: "700"
   }
 });

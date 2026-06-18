@@ -3,5 +3,5 @@
   "ios.buildReactNativeFromSource": "true",
   "EX_DEV_CLIENT_NETWORK_INSPECTOR": "true",
   "expo.inlineModules.watchedDirectories": "[]",
-  "expo.inlineModules.xcodeProjectTargets": "{\"mainTarget\":\"ClaroFullstackChallenge\",\"targets\":[]}"
+  "expo.inlineModules.xcodeProjectTargets": "{\"mainTarget\":\"Clarity\",\"targets\":[]}"
 }

@@ -1,1 +1,1 @@
-export { colors, radius, spacing, typography } from "./tokens";
+export { colors, radius, spacing, typography } from "@/shared/theme/tokens";

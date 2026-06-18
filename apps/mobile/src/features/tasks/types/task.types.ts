@@ -1,4 +1,4 @@
-import { Team } from "../../teams/types/team.types";
+import { Team } from "@/features/teams/types/team.types";
 
 export type TaskStatus = "PENDING" | "IN_PROGRESS" | "DONE";
 

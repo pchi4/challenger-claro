@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { colors, spacing, typography } from "../theme";
+import { colors, spacing, typography } from "@/shared/theme";
 
 interface AppHeaderProps {
   title: string;
@@ -13,17 +13,17 @@ export function AppHeader({
   title,
   subtitle,
   action,
-  centered = true
+  centered = true,
 }: AppHeaderProps): React.JSX.Element {
   return (
     <View style={[styles.container, centered && styles.containerCentered]}>
       <View style={styles.copy}>
         <Text style={styles.title}>{title}</Text>
-        {subtitle !== undefined ? (
-          <Text style={styles.subtitle}>{subtitle}</Text>
-        ) : null}
+      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
-      {action !== undefined ? <View style={styles.action}>{action}</View> : null}
+      {action == null ? null : (
+        <View style={styles.action}>{action}</View>
+      )}
     </View>
   );
 }
@@ -33,30 +33,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    gap: spacing.md
+    gap: spacing.md,
   },
   containerCentered: {
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   copy: {
     flex: 1,
-    gap: spacing.xs
+    gap: spacing.xs,
   },
   title: {
     color: colors.text,
     fontSize: typography.size.xxl,
     fontWeight: "800",
     lineHeight: typography.lineHeight.xl,
-    textAlign: "center"
+    textAlign: "center",
   },
   subtitle: {
     color: colors.muted,
     fontSize: typography.size.md,
     lineHeight: typography.lineHeight.md,
-    textAlign: "center"
+    textAlign: "center",
   },
   action: {
-    flexShrink: 0
-  }
+    flexShrink: 0,
+  },
 });

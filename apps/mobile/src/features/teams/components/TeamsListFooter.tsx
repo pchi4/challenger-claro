@@ -1,7 +1,7 @@
 import {
   AppErrorState,
   AppLoadingState
-} from "../../../shared/components";
+} from "@/shared/components";
 
 interface TeamsListFooterProps {
   isLoading: boolean;

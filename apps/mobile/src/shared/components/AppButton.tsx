@@ -9,7 +9,7 @@ import {
   TextStyle,
   ViewStyle
 } from "react-native";
-import { colors, radius, spacing, typography } from "../theme";
+import { colors, radius, spacing, typography } from "@/shared/theme";
 
 type AppButtonVariant = "primary" | "secondary" | "danger";
 

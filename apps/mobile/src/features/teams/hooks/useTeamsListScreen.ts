@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Href, useRouter } from "expo-router";
-import { useTeams } from "./useTeams";
+import { useTeams } from "@/features/teams/hooks/useTeams";
 
 export function useTeamsListScreen() {
   const router = useRouter();
@@ -33,6 +33,14 @@ export function useTeamsListScreen() {
     router.push("/teams/create" as Href);
   }
 
+  function handleEditTeam(id: string): void {
+    router.push(`/teams/${id}/edit` as Href);
+  }
+
+  function handleViewAllTasks(): void {
+    router.push("/tasks" as Href);
+  }
+
   return {
     teams: teamsQuery.data?.data ?? [],
     total: teamsQuery.data?.meta?.total ?? 0,
@@ -43,6 +51,8 @@ export function useTeamsListScreen() {
     handleTeamPress,
     handleSearchChange,
     handleCreateTeam,
+    handleEditTeam,
+    handleViewAllTasks,
     retry: teamsQuery.refetch
   };
 }

@@ -4,9 +4,9 @@ import { Control, FieldErrors, useForm } from "react-hook-form";
 import {
   teamFormSchema,
   TeamFormValues
-} from "../schemas/teamFormSchema";
-import { CreateTeamPayload } from "../types/team.types";
-import { useCreateTeam } from "./useCreateTeam";
+} from "@/features/teams/schemas/teamFormSchema";
+import { CreateTeamPayload } from "@/features/teams/types/team.types";
+import { useCreateTeam } from "@/features/teams/hooks/useCreateTeam";
 
 interface UseCreateTeamScreenResult {
   control: Control<TeamFormValues>;

@@ -2,26 +2,28 @@ import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { Control, FieldErrors, useForm } from "react-hook-form";
-import { useTeams } from "../../teams/hooks/useTeams";
-import { Team } from "../../teams/types/team.types";
+import { useTeams } from "@/features/teams/hooks/useTeams";
+import { Team } from "@/features/teams/types/team.types";
 import {
   taskFormSchema,
   TaskFormValues
-} from "../schemas/taskFormSchema";
+} from "@/features/tasks/schemas/taskFormSchema";
 import {
   CreateTaskPayload,
   TaskStatus,
   UpdateTaskPayload
-} from "../types/task.types";
-import { useCreateTask } from "./useCreateTask";
-import { useTask } from "./useTask";
-import { useUpdateTask } from "./useUpdateTask";
+} from "@/features/tasks/types/task.types";
+import { useCreateTask } from "@/features/tasks/hooks/useCreateTask";
+import { useTask } from "@/features/tasks/hooks/useTask";
+import { useUpdateTask } from "@/features/tasks/hooks/useUpdateTask";
 
 type TaskFormMode = "create" | "edit";
 
 interface UseTaskFormOptions {
   mode: TaskFormMode;
   taskId?: string;
+  contextTeamId?: string;
+  contextTeamName?: string;
 }
 
 interface UseTaskFormResult {
@@ -34,6 +36,8 @@ interface UseTaskFormResult {
   isError: boolean;
   errorMessage: string;
   submitLabel: string;
+  contextTeamId?: string;
+  contextTeamName?: string;
   toggleTeam: (teamId: string) => void;
   submit: () => void;
   retry: () => void;
@@ -49,7 +53,9 @@ const defaultValues: TaskFormValues = {
 
 export function useTaskForm({
   mode,
-  taskId = ""
+  taskId = "",
+  contextTeamId,
+  contextTeamName
 }: UseTaskFormOptions): UseTaskFormResult {
   const router = useRouter();
   const teamsQuery = useTeams({
@@ -89,6 +95,21 @@ export function useTaskForm({
     });
   }, [mode, reset, taskQuery.data]);
 
+  useEffect(() => {
+    if (
+      mode !== "create" ||
+      contextTeamId === undefined ||
+      selectedTeamIds.length > 0
+    ) {
+      return;
+    }
+
+    setValue("teamIds", [contextTeamId], {
+      shouldDirty: false,
+      shouldValidate: true
+    });
+  }, [contextTeamId, mode, selectedTeamIds.length, setValue]);
+
   function toggleTeam(teamId: string): void {
     const currentTeamIds = getValues("teamIds") ?? [];
     const nextTeamIds = currentTeamIds.includes(teamId)
@@ -114,7 +135,9 @@ export function useTaskForm({
       router.replace({
         pathname: "/tasks/[id]",
         params: {
-          id: response.data.id
+          id: response.data.id,
+          teamId: contextTeamId,
+          teamName: contextTeamName
         }
       });
       return;
@@ -128,7 +151,9 @@ export function useTaskForm({
     router.replace({
       pathname: "/tasks/[id]",
       params: {
-        id: response.data.id
+        id: response.data.id,
+        teamId: contextTeamId,
+        teamName: contextTeamName
       }
     });
   }
@@ -154,6 +179,8 @@ export function useTaskForm({
       taskQuery.error?.message ??
       "Não foi possível carregar o formulário.",
     submitLabel: mode === "create" ? "Criar tarefa" : "Salvar tarefa",
+    contextTeamId,
+    contextTeamName,
     toggleTeam,
     submit,
     retry

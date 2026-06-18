@@ -1,16 +1,15 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Controller } from "react-hook-form";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
   AppButton,
   AppFeedback,
-  AppHeader,
+  AppFormScreenHeader,
   AppScreen,
   AppTextInput,
-  AppTopBar
-} from "../../../shared/components";
-import { colors, spacing } from "../../../shared/theme";
-import { useCreateTeamScreen } from "../hooks/useCreateTeamScreen";
+  AppTopBar,
+} from "@/shared/components";
+import { spacing } from "@/shared/theme";
+import { useCreateTeamScreen } from "@/features/teams/hooks/useCreateTeamScreen";
 
 export function CreateTeamScreen(): React.JSX.Element {
   const screen = useCreateTeamScreen();
@@ -21,27 +20,31 @@ export function CreateTeamScreen(): React.JSX.Element {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
-          <Ionicons name="people-outline" size={58} color={colors.primary} />
-          <AppHeader
+          <AppFormScreenHeader
+            badgeLabel="Novo"
+            icon="people-outline"
             title="Novo Time"
-            subtitle="crie seu time para gerenciar as tarefas"
+            subtitle="Crie um time para organizar as tarefas e liberar a navegacao para o fluxo principal."
           />
         </View>
 
-        {screen.errorMessage !== undefined ? (
+        {screen.errorMessage && (
           <AppFeedback message={screen.errorMessage} variant="error" />
-        ) : null}
-        {screen.isSaving ? (
+        )}
+
+        {screen.isSaving && (
           <AppFeedback message="Criando time..." variant="info" />
-        ) : null}
+        )}
 
         <Controller
           control={screen.control}
           name="name"
           render={({ field: { onBlur, onChange, value } }) => (
             <AppTextInput
+              label="Nome"
               placeholder="Nome do time"
               value={value}
               onBlur={onBlur}
@@ -55,6 +58,7 @@ export function CreateTeamScreen(): React.JSX.Element {
           name="colorHex"
           render={({ field: { onBlur, onChange, value } }) => (
             <AppTextInput
+              label="Cor"
               placeholder="Cor do time"
               value={value}
               onBlur={onBlur}
@@ -70,6 +74,7 @@ export function CreateTeamScreen(): React.JSX.Element {
           name="description"
           render={({ field: { onBlur, onChange, value } }) => (
             <AppTextInput
+              label="Descrição"
               placeholder="Descrição"
               value={value}
               onBlur={onBlur}
@@ -91,20 +96,18 @@ export function CreateTeamScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   screen: {
-    paddingTop: spacing.md
+    paddingTop: spacing.md,
   },
   content: {
     flexGrow: 1,
     justifyContent: "center",
     gap: spacing.md,
-    paddingBottom: spacing.xxl
+    paddingBottom: spacing.xxl,
   },
   hero: {
-    alignItems: "center",
-    gap: spacing.md,
-    marginBottom: spacing.xl
+    marginBottom: spacing.xl,
   },
   colorInput: {
-    paddingRight: spacing.xl
-  }
+    paddingRight: spacing.xl,
+  },
 });

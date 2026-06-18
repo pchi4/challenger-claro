@@ -1,12 +1,12 @@
-import { httpClient } from "../../../shared/api/httpClient";
-import { ApiResponse } from "../../../shared/types/api";
+import { httpClient } from "@/shared/api/httpClient";
+import { ApiResponse } from "@/shared/types/api";
 import {
   CreateTaskPayload,
   GetTasksParams,
   Task,
   TaskStatus,
   UpdateTaskPayload
-} from "../types/task.types";
+} from "@/features/tasks/types/task.types";
 
 export function getTasks(
   params: GetTasksParams = {}

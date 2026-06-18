@@ -1,4 +1,4 @@
-import { API_URL } from "../constants/env";
+import { API_URL } from "@/shared/constants/env";
 
 export interface HttpClientOptions extends Omit<RequestInit, "body"> {
   body?: unknown;

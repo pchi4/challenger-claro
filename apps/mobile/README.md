@@ -1,6 +1,6 @@
 # Mobile
 
-Aplicativo mobile para gerenciar tarefas e times. O app consome a API REST do backend, lista tarefas, permite filtros, criação, edição, alteração de status e exclusão de tarefas.
+Aplicativo mobile para gerenciar tarefas e times. O app consome a API REST do backend, lista tarefas globalmente e por time, permite filtros, criação, edição, alteração de status e exclusão de tarefas, além de criar, editar e remover times.
 
 ## Stack
 
@@ -34,6 +34,10 @@ TanStack Query foi usado para cache, loading/error states, invalidação de list
 
 Os formulários de tarefa usam React Hook Form para controle eficiente dos campos e Zod para validação tipada das regras de entrada.
 
+### Offline-first com MMKV
+
+O app mantém cache local de times e tarefas com `react-native-mmkv`, usa `@react-native-community/netinfo` para observar conectividade e sincroniza mutações pendentes quando a rede volta. Isso permite continuar navegando e criando dados essenciais mesmo offline.
+
 ### StyleSheet e tokens
 
 O app usa `StyleSheet` com tokens compartilhados em `src/shared/theme`, em vez de `styled-components`. Isso mantém a UI simples, performática e consistente.
@@ -47,11 +51,16 @@ npm install
 cp .env.example .env
 ```
 
-Configure a URL da API:
+Configure a URL da API quando quiser sobrescrever o padrão:
 
 ```bash
 export EXPO_PUBLIC_API_URL="http://localhost:3000/api"
 ```
+
+Sem `EXPO_PUBLIC_API_URL`, o app usa por padrão:
+
+- iOS: `http://localhost:3000/api`
+- Android Emulator: `http://10.0.2.2:3000/api`
 
 Inicie o app:
 
@@ -91,9 +100,11 @@ cd apps/api
 npm run start:dev
 ```
 
+Para acesso a partir de dispositivo físico, o backend precisa aceitar conexões externas. Neste repositório ele sobe por padrão em `0.0.0.0`, então basta usar o IP local correto em `EXPO_PUBLIC_API_URL`.
+
 ## Fluxos implementados
 
-- Listar tasks
+- Listar tasks globalmente
 - Filtrar tasks por status
 - Filtrar tasks por time
 - Criar task
@@ -101,11 +112,14 @@ npm run start:dev
 - Alterar status da task
 - Deletar task
 - Listar times para filtro
+- Criar time
+- Editar time
+- Deletar time
+- Suporte offline-first para listagem e mutações principais
 
 ## O que faria diferente em produção
 
 - Autenticação e autorização.
-- Offline-first com MMKV.
 - Retry/backoff para chamadas instáveis.
 - Logs de erro estruturados.
 - Analytics de uso.

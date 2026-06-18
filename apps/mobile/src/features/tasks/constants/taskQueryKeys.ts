@@ -1,4 +1,4 @@
-import { GetTasksParams } from "../types/task.types";
+import { GetTasksParams } from "@/features/tasks/types/task.types";
 
 export const taskQueryKeys = {
   all: ["tasks"] as const,

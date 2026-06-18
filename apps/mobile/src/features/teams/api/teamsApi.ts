@@ -1,11 +1,11 @@
-import { httpClient } from "../../../shared/api/httpClient";
-import { ApiResponse } from "../../../shared/types/api";
+import { httpClient } from "@/shared/api/httpClient";
+import { ApiResponse } from "@/shared/types/api";
 import {
   CreateTeamPayload,
   GetTeamsParams,
   Team,
   UpdateTeamPayload
-} from "../types/team.types";
+} from "@/features/teams/types/team.types";
 
 export function getTeams(
   params: GetTeamsParams = {}

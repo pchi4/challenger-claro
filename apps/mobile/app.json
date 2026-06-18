@@ -1,21 +1,34 @@
 {
   "expo": {
-    "name": "Claro Fullstack Challenge",
-    "slug": "claro-fullstack-challenge",
+    "name": "Clarity",
+    "slug": "clarity",
     "version": "0.0.1",
     "orientation": "portrait",
-    "scheme": "claro-fullstack-challenge",
+    "scheme": "clarity",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "plugins": [
       "expo-router",
       "expo-asset"
     ],
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1F2028"
+    },
     "experiments": {
       "typedRoutes": true
     },
     "ios": {
       "bundleIdentifier": "com.anonymous.claro-fullstack-challenge"
+    },
+    "android": {
+      "package": "com.anonymous.clarofullstackchallenge",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1F2028"
+      }
     }
   }
 }

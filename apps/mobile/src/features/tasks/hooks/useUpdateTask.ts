@@ -3,10 +3,10 @@ import {
   useQueryClient,
   UseMutationResult
 } from "@tanstack/react-query";
-import { ApiResponse } from "../../../shared/types/api";
-import { updateTask } from "../api/tasksApi";
-import { taskQueryKeys } from "../constants/taskQueryKeys";
-import { Task, UpdateTaskPayload } from "../types/task.types";
+import { ApiResponse } from "@/shared/types/api";
+import { taskQueryKeys } from "@/features/tasks/constants/taskQueryKeys";
+import { Task, UpdateTaskPayload } from "@/features/tasks/types/task.types";
+import { updateTaskWithOffline } from "@/shared/offline/offlineApi";
 
 interface UpdateTaskVariables {
   id: string;
@@ -21,7 +21,7 @@ export function useUpdateTask(): UseMutationResult<
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, payload }) => updateTask(id, payload),
+    mutationFn: ({ id, payload }) => updateTaskWithOffline(id, payload),
     onSuccess: (response, variables) => {
       queryClient.setQueryData(taskQueryKeys.detail(variables.id), response);
       void queryClient.invalidateQueries({

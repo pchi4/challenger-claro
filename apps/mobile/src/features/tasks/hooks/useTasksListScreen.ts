@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { TaskStatus } from "../types/task.types";
-import { useTasks } from "./useTasks";
+import { TaskStatus } from "@/features/tasks/types/task.types";
+import { useTasks } from "@/features/tasks/hooks/useTasks";
 
 const PAGE_SIZE = 10;
 
@@ -45,6 +45,10 @@ export function useTasksListScreen() {
   }
 
   function handleLoadMore(): void {
+    if (tasksQuery.isFetching || !canLoadMore) {
+      return;
+    }
+
     setLimit((currentLimit) => currentLimit + PAGE_SIZE);
   }
 
@@ -52,13 +56,21 @@ export function useTasksListScreen() {
     router.push({
       pathname: "/tasks/[id]",
       params: {
-        id
+        id,
+        teamId,
+        teamName
       }
     });
   }
 
   function handleCreateTask(): void {
-    router.push("/tasks/create");
+    router.push({
+      pathname: "/tasks/create",
+      params: {
+        teamId,
+        teamName
+      }
+    });
   }
 
   function handleTeamsPress(): void {
@@ -67,10 +79,7 @@ export function useTasksListScreen() {
 
   function handleClearTeamFilter(): void {
     setLimit(PAGE_SIZE);
-    router.setParams({
-      teamId: undefined,
-      teamName: undefined
-    });
+    router.replace("/tasks");
   }
 
   return {

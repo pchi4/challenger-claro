@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import {
   StyleProp,
   StyleSheet,
@@ -7,9 +7,9 @@ import {
   TextInputProps,
   TextStyle,
   View,
-  ViewStyle
+  ViewStyle,
 } from "react-native";
-import { colors, radius, spacing, typography } from "../theme";
+import { colors, radius, spacing, typography } from "@/shared/theme";
 
 interface AppTextInputProps extends TextInputProps {
   label?: string;
@@ -21,49 +21,123 @@ interface AppTextInputProps extends TextInputProps {
 export const AppTextInput = forwardRef<TextInput, AppTextInputProps>(
   function AppTextInput(
     { label, error, containerStyle, labelStyle, style, ...props },
-    ref
+    ref,
   ): React.JSX.Element {
+    const [isFocused, setIsFocused] = useState(false);
+    const hasValue =
+      typeof props.value === "string" ? props.value.trim().length > 0 : false;
+    const hasFloatingLabel =
+      (label !== undefined && label.length > 0) || hasValue || isFocused;
+
+    let computedPlaceholder: string | undefined;
+    if (isFocused) {
+      computedPlaceholder = props.placeholder;
+    } else if (hasValue) {
+      computedPlaceholder = undefined;
+    } else {
+      computedPlaceholder = props.placeholder;
+    }
+
     return (
       <View style={[styles.container, containerStyle]}>
-        {label !== undefined && label.length > 0 ? (
-          <Text style={[styles.label, labelStyle]}>{label}</Text>
-        ) : null}
-        <TextInput
-          ref={ref}
-          placeholderTextColor={colors.muted}
-          style={[styles.input, error !== undefined && styles.inputError, style]}
-          {...props}
-        />
-        {error !== undefined ? <Text style={styles.error}>{error}</Text> : null}
+        <View
+          style={[
+            styles.field,
+            isFocused && styles.fieldFocused,
+            error !== undefined && styles.fieldError,
+          ]}
+        >
+          {hasFloatingLabel ? (
+            <Text
+              style={[
+                styles.label,
+                isFocused && styles.labelFocused,
+                error !== undefined && styles.labelError,
+                labelStyle,
+              ]}
+            >
+              {label ?? props.placeholder}
+            </Text>
+          ) : null}
+          <TextInput
+            ref={ref}
+            placeholderTextColor={colors.muted}
+            style={[
+              styles.input,
+              props.multiline === true && styles.inputMultiline,
+              style,
+            ]}
+            onFocus={(event) => {
+              setIsFocused(true);
+              props.onFocus?.(event);
+            }}
+            onBlur={(event) => {
+              setIsFocused(false);
+              props.onBlur?.(event);
+            }}
+            {...props}
+            placeholder={computedPlaceholder}
+          />
+        </View>
+        {error === undefined ? null : <Text style={styles.error}>{error}</Text>}
       </View>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.xs
+    gap: spacing.xs,
+    paddingTop: spacing.sm,
+  },
+  field: {
+    position: "relative",
+    minHeight: 58,
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    marginTop: spacing.xs,
+    paddingHorizontal: spacing.md,
+    backgroundColor: colors.surface,
+  },
+  fieldFocused: {
+    borderColor: colors.primary,
+  },
+  fieldError: {
+    borderColor: colors.danger,
   },
   label: {
-    color: colors.text,
+    position: "absolute",
+    top: -9,
+    left: spacing.sm,
+    paddingHorizontal: spacing.xs,
+    color: colors.muted,
     fontSize: typography.size.sm,
-    fontWeight: "700"
+    fontWeight: "700",
+    backgroundColor: colors.background,
+  },
+  labelFocused: {
+    color: colors.primary,
+  },
+  labelError: {
+    color: colors.danger,
   },
   input: {
-    minHeight: 48,
-    borderWidth: 0,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
+    minHeight: 56,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xs,
+    paddingHorizontal: 0,
     color: colors.text,
-    backgroundColor: colors.input,
-    fontSize: typography.size.md
+    fontSize: typography.size.md,
   },
-  inputError: {
-    borderColor: colors.danger
+  inputMultiline: {
+    minHeight: 112,
+    textAlignVertical: "top",
   },
   error: {
     color: colors.danger,
     fontSize: typography.size.sm,
-    lineHeight: typography.lineHeight.sm
-  }
+    lineHeight: typography.lineHeight.sm,
+  },
 });

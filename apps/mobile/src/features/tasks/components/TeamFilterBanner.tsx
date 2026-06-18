@@ -1,29 +1,37 @@
 import { StyleSheet, Text, View } from "react-native";
-import { AppButton } from "../../../shared/components";
-import { colors, radius, spacing, typography } from "../../../shared/theme";
+import { AppButton } from "@/shared/components";
+import { colors, radius, spacing, typography } from "@/shared/theme";
 
 interface TeamFilterBannerProps {
   teamLabel: string;
-  onClear: () => void;
+  onClear?: () => void;
+  label?: string;
+  actionLabel?: string;
 }
 
 export function TeamFilterBanner({
   teamLabel,
-  onClear
+  onClear,
+  label = "Filtrando por time",
+  actionLabel = "Limpar"
 }: TeamFilterBannerProps): React.JSX.Element {
   return (
     <View style={styles.container}>
       <View style={styles.textGroup}>
-        <Text style={styles.label}>Filtrando por time</Text>
+        <Text style={styles.label}>{label}</Text>
         <Text style={styles.name}>{teamLabel}</Text>
       </View>
-      <AppButton
-        title="Limpar"
-        variant="secondary"
-        onPress={onClear}
-        style={styles.button}
-        textStyle={styles.buttonText}
-      />
+      <View style={styles.actions}>
+        {onClear ? (
+          <AppButton
+            title={actionLabel}
+            variant="secondary"
+            onPress={onClear}
+            style={styles.button}
+            textStyle={styles.buttonText}
+          />
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -43,6 +51,11 @@ const styles = StyleSheet.create({
   textGroup: {
     flex: 1,
     gap: spacing.xs
+  },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm
   },
   label: {
     color: colors.muted,

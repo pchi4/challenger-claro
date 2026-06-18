@@ -3,10 +3,10 @@ import {
   useQueryClient,
   UseMutationResult
 } from "@tanstack/react-query";
-import { ApiResponse } from "../../../shared/types/api";
-import { updateTeam } from "../api/teamsApi";
-import { teamQueryKeys } from "../constants/teamQueryKeys";
-import { Team, UpdateTeamPayload } from "../types/team.types";
+import { ApiResponse } from "@/shared/types/api";
+import { teamQueryKeys } from "@/features/teams/constants/teamQueryKeys";
+import { Team, UpdateTeamPayload } from "@/features/teams/types/team.types";
+import { updateTeamWithOffline } from "@/shared/offline/offlineApi";
 
 interface UpdateTeamVariables {
   id: string;
@@ -21,7 +21,7 @@ export function useUpdateTeam(): UseMutationResult<
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, payload }) => updateTeam(id, payload),
+    mutationFn: ({ id, payload }) => updateTeamWithOffline(id, payload),
     onSuccess: (response, variables) => {
       queryClient.setQueryData(teamQueryKeys.detail(variables.id), response);
       void queryClient.invalidateQueries({

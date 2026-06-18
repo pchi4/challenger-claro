@@ -3,10 +3,10 @@ import {
   useQueryClient,
   UseMutationResult
 } from "@tanstack/react-query";
-import { ApiResponse } from "../../../shared/types/api";
-import { createTeam } from "../api/teamsApi";
-import { teamQueryKeys } from "../constants/teamQueryKeys";
-import { CreateTeamPayload, Team } from "../types/team.types";
+import { ApiResponse } from "@/shared/types/api";
+import { teamQueryKeys } from "@/features/teams/constants/teamQueryKeys";
+import { CreateTeamPayload, Team } from "@/features/teams/types/team.types";
+import { createTeamWithOffline } from "@/shared/offline/offlineApi";
 
 export function useCreateTeam(): UseMutationResult<
   ApiResponse<Team>,
@@ -16,7 +16,7 @@ export function useCreateTeam(): UseMutationResult<
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createTeam,
+    mutationFn: createTeamWithOffline,
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: teamQueryKeys.lists()
