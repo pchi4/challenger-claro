@@ -30,3 +30,7 @@ export {
   updateOfflineTeam
 } from "@/shared/offline/offlineMutations";
 export { hasPendingOfflineMutations } from "@/shared/offline/offlineQueue";
+export {
+  getOfflineTelemetrySnapshot,
+  resetOfflineTelemetry
+} from "@/shared/offline/offlineTelemetry";

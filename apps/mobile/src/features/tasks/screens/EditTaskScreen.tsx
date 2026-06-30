@@ -5,7 +5,7 @@ import {
   AppErrorState,
   AppLoadingState,
   AppScreen,
-  AppTopBar
+  AppTopBar,
 } from "@/shared/components";
 import { TeamFilterBanner } from "@/features/tasks/components/TeamFilterBanner";
 import { spacing } from "@/shared/theme";
@@ -17,7 +17,7 @@ interface EditTaskScreenProps {
 }
 
 export function EditTaskScreen({
-  taskId
+  taskId,
 }: EditTaskScreenProps): React.JSX.Element {
   const router = useRouter();
   const params = useLocalSearchParams<{
@@ -30,7 +30,7 @@ export function EditTaskScreen({
     mode: "edit",
     taskId,
     contextTeamId,
-    contextTeamName
+    contextTeamName,
   });
 
   if (form.isLoading) {
@@ -61,7 +61,7 @@ export function EditTaskScreen({
           centered={false}
         />
       </View>
-      {form.contextTeamName ? (
+      {form.contextTeamName && (
         <View style={styles.contextBanner}>
           <TeamFilterBanner
             teamLabel={form.contextTeamName}
@@ -72,13 +72,13 @@ export function EditTaskScreen({
                 pathname: "/tasks",
                 params: {
                   teamId: form.contextTeamId,
-                  teamName: form.contextTeamName
-                }
+                  teamName: form.contextTeamName,
+                },
               })
             }
           />
         </View>
-      ) : null}
+      )}
       <TaskForm
         control={form.control}
         errors={form.errors}
@@ -96,14 +96,16 @@ export function EditTaskScreen({
 const styles = StyleSheet.create({
   hero: {
     marginTop: spacing.md,
-    marginBottom: spacing.lg
+    marginBottom: spacing.lg,
   },
   contextBanner: {
-    marginBottom: spacing.md
-  }
+    marginBottom: spacing.md,
+  },
 });
 
-function normalizeParam(value: string | string[] | undefined): string | undefined {
+function normalizeParam(
+  value: string | string[] | undefined,
+): string | undefined {
   if (Array.isArray(value)) {
     return value[0];
   }

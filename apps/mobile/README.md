@@ -44,9 +44,15 @@ O app usa `StyleSheet` com tokens compartilhados em `src/shared/theme`, em vez d
 
 ## Como rodar
 
+Use Node.js 22 LTS:
+
+```bash
+nvm install
+nvm use
+```
+
 ```bash
 cd apps/mobile
-nvm use
 npm install
 cp .env.example .env
 ```
@@ -62,7 +68,7 @@ Sem `EXPO_PUBLIC_API_URL`, o app usa por padrão:
 - iOS: `http://localhost:3000/api`
 - Android Emulator: `http://10.0.2.2:3000/api`
 
-Inicie o app:
+Inicie o Metro para um development build:
 
 ```bash
 npm run start
@@ -73,6 +79,8 @@ Para rodar o build nativo iOS:
 ```bash
 npm run ios
 ```
+
+O fluxo suportado para avaliação é com **development build**. O app depende de `react-native-mmkv`, que é um módulo nativo baseado em NitroModules e exige app compilado. Por isso, **Expo Go não é um alvo suportado** para validar a persistência offline real.
 
 O primeiro build iOS pode demorar alguns minutos. O projeto está configurado para compilar o React Native a partir do código fonte no iOS, evitando o erro de CocoaPods relacionado ao `React-Core-prebuilt`.
 
@@ -101,6 +109,19 @@ npm run start:dev
 ```
 
 Para acesso a partir de dispositivo físico, o backend precisa aceitar conexões externas. Neste repositório ele sobe por padrão em `0.0.0.0`, então basta usar o IP local correto em `EXPO_PUBLIC_API_URL`.
+
+## Troubleshooting
+
+### Expo Go abre, mas o app falha com erro de NitroModules ou MMKV
+
+Isso é esperado se tentar abrir o projeto no Expo Go. Nesse cenário, rode:
+
+```bash
+npm run ios
+npm run start
+```
+
+Depois abra o app compilado no simulador ou dispositivo. Assim o módulo nativo do `react-native-mmkv` fica disponível e o comportamento offline funciona de forma completa.
 
 ## Fluxos implementados
 

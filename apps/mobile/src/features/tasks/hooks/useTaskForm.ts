@@ -6,12 +6,12 @@ import { useTeams } from "@/features/teams/hooks/useTeams";
 import { Team } from "@/features/teams/types/team.types";
 import {
   taskFormSchema,
-  TaskFormValues
+  TaskFormValues,
 } from "@/features/tasks/schemas/taskFormSchema";
 import {
   CreateTaskPayload,
   TaskStatus,
-  UpdateTaskPayload
+  UpdateTaskPayload,
 } from "@/features/tasks/types/task.types";
 import { useCreateTask } from "@/features/tasks/hooks/useCreateTask";
 import { useTask } from "@/features/tasks/hooks/useTask";
@@ -48,19 +48,19 @@ const defaultValues: TaskFormValues = {
   description: "",
   status: "PENDING",
   dueDate: "",
-  teamIds: []
+  teamIds: [],
 };
 
 export function useTaskForm({
   mode,
   taskId = "",
   contextTeamId,
-  contextTeamName
+  contextTeamName,
 }: UseTaskFormOptions): UseTaskFormResult {
   const router = useRouter();
   const teamsQuery = useTeams({
     limit: 100,
-    offset: 0
+    offset: 0,
   });
   const taskQuery = useTask(mode === "edit" ? taskId : "");
   const createTaskMutation = useCreateTask();
@@ -72,10 +72,10 @@ export function useTaskForm({
     handleSubmit,
     reset,
     setValue,
-    watch
+    watch,
   } = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
-    defaultValues
+    defaultValues,
   });
   const selectedTeamIds = watch("teamIds") ?? [];
 
@@ -91,7 +91,7 @@ export function useTaskForm({
       description: task.description ?? "",
       status: task.status,
       dueDate: task.dueDate ?? "",
-      teamIds: task.teams.map((team) => team.id)
+      teamIds: task.teams.map((team) => team.id),
     });
   }, [mode, reset, taskQuery.data]);
 
@@ -106,7 +106,7 @@ export function useTaskForm({
 
     setValue("teamIds", [contextTeamId], {
       shouldDirty: false,
-      shouldValidate: true
+      shouldValidate: true,
     });
   }, [contextTeamId, mode, selectedTeamIds.length, setValue]);
 
@@ -118,7 +118,7 @@ export function useTaskForm({
 
     setValue("teamIds", nextTeamIds, {
       shouldDirty: true,
-      shouldValidate: true
+      shouldValidate: true,
     });
   }
 
@@ -129,7 +129,7 @@ export function useTaskForm({
   async function saveTask(values: TaskFormValues): Promise<void> {
     if (mode === "create") {
       const response = await createTaskMutation.mutateAsync(
-        toCreatePayload(values)
+        toCreatePayload(values),
       );
 
       router.replace({
@@ -137,15 +137,15 @@ export function useTaskForm({
         params: {
           id: response.data.id,
           teamId: contextTeamId,
-          teamName: contextTeamName
-        }
+          teamName: contextTeamName,
+        },
       });
       return;
     }
 
     const response = await updateTaskMutation.mutateAsync({
       id: taskId,
-      payload: toUpdatePayload(values)
+      payload: toUpdatePayload(values),
     });
 
     router.replace({
@@ -153,8 +153,8 @@ export function useTaskForm({
       params: {
         id: response.data.id,
         teamId: contextTeamId,
-        teamName: contextTeamName
-      }
+        teamName: contextTeamName,
+      },
     });
   }
 
@@ -183,7 +183,7 @@ export function useTaskForm({
     contextTeamName,
     toggleTeam,
     submit,
-    retry
+    retry,
   };
 }
 
@@ -191,9 +191,9 @@ function toCreatePayload(values: TaskFormValues): CreateTaskPayload {
   return {
     title: values.title.trim(),
     description: normalizeOptionalText(values.description),
-    status: values.status as TaskStatus,
+    status: values.status,
     dueDate: normalizeDueDate(values.dueDate),
-    teamIds: values.teamIds ?? []
+    teamIds: values.teamIds ?? [],
   };
 }
 

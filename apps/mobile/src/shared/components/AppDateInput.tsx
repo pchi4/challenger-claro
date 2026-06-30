@@ -99,7 +99,7 @@ export function AppDateInput({
           </View>
         </View>
       </Pressable>
-      {error !== undefined ? <Text style={styles.error}>{error}</Text> : null}
+      {error && <Text style={styles.error}>{error}</Text>}
 
       <Modal
         animationType="slide"
@@ -152,7 +152,7 @@ export function AppDateInput({
             <View style={styles.daysGrid}>
               {calendarDays.map((day, index) => {
                 if (day === null) {
-                  return <View key={`empty-${index}`} style={styles.dayCell} />;
+                  return <View key={`${currentMonth.getFullYear()}-${currentMonth.getMonth()}-empty-${index}`} style={styles.dayCell} />;
                 }
 
                 const isSelected =

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Href, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useTeams } from "@/features/teams/hooks/useTeams";
 
 export function useTeamsListScreen() {
@@ -9,9 +9,9 @@ export function useTeamsListScreen() {
     () => ({
       limit: 100,
       offset: 0,
-      search: search.trim().length > 0 ? search.trim() : undefined
+      search: search.trim().length > 0 ? search.trim() : undefined,
     }),
-    [search]
+    [search],
   );
   const teamsQuery = useTeams(queryParams);
 
@@ -20,8 +20,8 @@ export function useTeamsListScreen() {
       pathname: "/tasks",
       params: {
         teamId: id,
-        teamName: name
-      }
+        teamName: name,
+      },
     });
   }
 
@@ -30,15 +30,15 @@ export function useTeamsListScreen() {
   }
 
   function handleCreateTeam(): void {
-    router.push("/teams/create" as Href);
+    router.push("/teams/create");
   }
 
   function handleEditTeam(id: string): void {
-    router.push(`/teams/${id}/edit` as Href);
+    router.push(`/teams/${id}/edit`);
   }
 
   function handleViewAllTasks(): void {
-    router.push("/tasks" as Href);
+    router.push("/tasks");
   }
 
   return {
@@ -47,12 +47,13 @@ export function useTeamsListScreen() {
     search,
     isLoading: teamsQuery.isLoading,
     isError: teamsQuery.isError,
-    errorMessage: teamsQuery.error?.message ?? "Não foi possível carregar os times.",
+    errorMessage:
+      teamsQuery.error?.message ?? "Não foi possível carregar os times.",
     handleTeamPress,
     handleSearchChange,
     handleCreateTeam,
     handleEditTeam,
     handleViewAllTasks,
-    retry: teamsQuery.refetch
+    retry: teamsQuery.refetch,
   };
 }

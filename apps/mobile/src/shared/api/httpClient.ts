@@ -1,3 +1,4 @@
+import { ApiErrorResponse } from "@/shared/types/api";
 import { API_URL } from "@/shared/constants/env";
 
 export interface HttpClientOptions extends Omit<RequestInit, "body"> {
@@ -34,7 +35,11 @@ export async function httpClient<TResponse>(
   const payload = await parseJson(response);
 
   if (!response.ok) {
-    throw new HttpClientError(response.statusText, response.status, payload);
+    throw new HttpClientError(
+      getErrorMessage(payload, response.statusText),
+      response.status,
+      payload
+    );
   }
 
   return payload as TResponse;
@@ -63,5 +68,33 @@ async function parseJson(response: Response): Promise<unknown> {
     return null;
   }
 
-  return JSON.parse(text) as unknown;
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return text;
+  }
+}
+
+function getErrorMessage(payload: unknown, fallback: string): string {
+  if (isApiErrorResponse(payload)) {
+    return payload.error.message;
+  }
+
+  if (typeof payload === "string" && payload.trim().length > 0) {
+    return payload;
+  }
+
+  return fallback;
+}
+
+function isApiErrorResponse(payload: unknown): payload is ApiErrorResponse {
+  return (
+    typeof payload === "object" &&
+    payload !== null &&
+    "error" in payload &&
+    typeof payload.error === "object" &&
+    payload.error !== null &&
+    "message" in payload.error &&
+    typeof payload.error.message === "string"
+  );
 }

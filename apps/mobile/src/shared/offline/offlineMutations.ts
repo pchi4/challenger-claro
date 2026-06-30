@@ -188,11 +188,31 @@ export function updateOfflineTaskStatus(
   id: string,
   status: TaskStatus,
 ): ApiResponse<Task> | undefined {
-  const response = updateOfflineTask(id, {
-    status,
+  let updatedTask: Task | undefined;
+
+  writeOfflineState((state) => {
+    const resolvedId = state.idMappings[id] ?? id;
+    const nextTasks = state.tasks.map((task) => {
+      if (task.id !== resolvedId && task.id !== id) {
+        return task;
+      }
+
+      updatedTask = {
+        ...task,
+        status,
+        updatedAt: new Date().toISOString(),
+      };
+
+      return updatedTask;
+    });
+
+    return {
+      ...state,
+      tasks: nextTasks,
+    };
   });
 
-  if (response === undefined) {
+  if (updatedTask === undefined) {
     return undefined;
   }
 
@@ -202,7 +222,9 @@ export function updateOfflineTaskStatus(
     status,
   });
 
-  return response;
+  return {
+    data: updatedTask,
+  };
 }
 
 export function deleteOfflineTeam(id: string): void {
