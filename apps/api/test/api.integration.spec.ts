@@ -2,7 +2,7 @@ import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import request = require("supertest");
 import { AppModule } from "@/app.module";
-import { GlobalExceptionFilter } from "@/common/filters/global-exception.filter";
+import { setupApp } from "@/app.setup";
 import { PrismaService } from "@/modules/prisma/prisma.service";
 
 const TaskStatus = {
@@ -280,6 +280,10 @@ class InMemoryPrismaService {
     });
   }
 
+  async healthcheck(): Promise<void> {
+    return Promise.resolve();
+  }
+
   private findTeams(args: TeamQueryArgs): Team[] {
     const search = args.where?.OR?.[0]?.name?.contains;
 
@@ -415,8 +419,7 @@ describe("API integration", () => {
       .compile();
 
     app = moduleRef.createNestApplication();
-    app.setGlobalPrefix("api");
-    app.useGlobalFilters(new GlobalExceptionFilter());
+    setupApp(app);
 
     await app.init();
   });
@@ -440,6 +443,7 @@ describe("API integration", () => {
 
       expect(body.data.name).toBe("Mobile Team");
       expect(body.data.colorHex).toBe("#E30613");
+      expect(response.headers["x-request-id"]).toEqual(expect.any(String));
     });
 
     it("deve listar times com meta", async () => {
@@ -499,6 +503,37 @@ describe("API integration", () => {
         .expect(200);
 
       await api(app).get(`/api/teams/${created.id}`).expect(404);
+    });
+  });
+
+  describe("Observability", () => {
+    it("deve retornar healthcheck com status ok", async () => {
+      const response = await api(app).get("/api/health").expect(200);
+
+      expect(response.body).toMatchObject({
+        data: {
+          status: "ok",
+          database: {
+            status: "ok"
+          }
+        }
+      });
+    });
+
+    it("deve retornar metricas com contadores de requests", async () => {
+      await api(app).get("/api/health").expect(200);
+      const response = await api(app).get("/api/metrics").expect(200);
+
+      expect(response.body.data.totals.requests).toBeGreaterThanOrEqual(1);
+      expect(response.body.data.routes).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            method: "GET",
+            path: "/api/health",
+            statusCode: 200
+          })
+        ])
+      );
     });
   });
 
@@ -675,5 +710,5 @@ async function createTask(
 }
 
 function api(app: INestApplication): request.SuperTest<request.Test> {
-  return request(app.getHttpAdapter().getInstance());
+  return request(app.getHttpServer());
 }

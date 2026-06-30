@@ -5,22 +5,41 @@ import {
   HttpException,
   HttpStatus
 } from "@nestjs/common";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { ZodError } from "zod";
 import { ApiErrorResponse } from "@/common/types/api-response";
 import { createErrorResponse } from "@/common/utils/response-envelope";
+import { logError } from "@/common/utils/observability";
 import {
   ZodValidationException,
   formatZodError
 } from "@/common/pipes/zod-validation.pipe";
 
+interface RequestWithContext extends Request {
+  requestId?: string;
+}
+
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
+    const request = host.switchToHttp().getRequest<RequestWithContext>();
     const response = host.switchToHttp().getResponse<Response>();
     const status = this.getStatus(exception);
+    const errorBody = createErrorResponse(this.getError(exception));
 
-    response.status(status).json(createErrorResponse(this.getError(exception)));
+    logError("HTTP request failed", {
+      requestId: request.requestId ?? null,
+      method: request.method,
+      path: request.originalUrl ?? request.url,
+      statusCode: status,
+      errorCode: errorBody.error.code,
+      errorMessage: errorBody.error.message,
+      details: errorBody.error.details,
+      exceptionName:
+        exception instanceof Error ? exception.name : "UnknownException"
+    });
+
+    response.status(status).json(errorBody);
   }
 
   private getStatus(exception: unknown): number {
