@@ -2,16 +2,27 @@
   "name": "challenger-claro",
   "version": "0.0.1",
   "private": true,
+  "workspaces": [
+    "apps/api",
+    "apps/mobile"
+  ],
   "engines": {
     "node": ">=20 <25"
   },
   "scripts": {
     "start": "npm run start:api",
-    "start:api": "npm --prefix apps/api run start:dev",
-    "start:mobile": "npm --prefix apps/mobile run start",
-    "seed": "npm --prefix apps/api run seed",
-    "test": "npm --prefix apps/api run test",
-    "build": "npm --prefix apps/api run build",
-    "typecheck": "npm --prefix apps/mobile run typecheck"
+    "start:api": "npm run start:dev -w @task-teams/api",
+    "start:mobile": "npm run ios -w @task-teams/mobile",
+    "start:mobile:metro": "npm run start -w @task-teams/mobile",
+    "start:mobile:android": "npm run android -w @task-teams/mobile",
+    "lint": "npm run lint -w @task-teams/api",
+    "postinstall": "npm run prisma:generate -w @task-teams/api",
+    "seed": "npm run seed -w @task-teams/api",
+    "test": "npm run test:api && npm run test:mobile",
+    "test:api": "npm run test -w @task-teams/api",
+    "test:mobile": "npm run test -w @task-teams/mobile",
+    "build": "npm run build -w @task-teams/api",
+    "typecheck": "npm run typecheck -w @task-teams/mobile",
+    "ci": "npm run lint && npm run typecheck && npm test"
   }
 }

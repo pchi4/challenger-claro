@@ -13,10 +13,13 @@ Scripts na raiz do monorepo:
 
 - `npm run start:api`
 - `npm run start:mobile`
+- `npm run lint`
 - `npm run seed`
 - `npm run test`
+- `npm run test:mobile`
 - `npm run build`
 - `npm run typecheck`
+- `npm run ci`
 
 O fluxo principal cobre:
 
@@ -50,6 +53,17 @@ O fluxo principal cobre:
 - Zod
 - `react-native-mmkv`
 - `@react-native-community/netinfo`
+
+## Monorepo
+
+O repositório está organizado como monorepo com `npm workspaces`, mantendo:
+
+- `apps/api` para o backend
+- `apps/mobile` para o aplicativo mobile
+
+Os scripts da raiz funcionam como ponto de entrada único para validação e execução local.
+
+As dependências são instaladas na raiz do repositório. Em um checkout limpo, não é necessário manter `package-lock.json` ou `node_modules` separados por app.
 
 ## Decisões arquiteturais
 
@@ -183,28 +197,38 @@ Se possível, clone o projeto em um caminho sem espaços, por exemplo `~/Project
 
 ## Scripts de atalho na raiz
 
-Depois de configurar cada app ao menos uma vez, você também pode usar os scripts da raiz:
+Depois de instalar as dependências na raiz, você pode usar os scripts abaixo:
 
 ```bash
 npm run start:api
 npm run start:mobile
+npm run lint
 npm run seed
 npm run test
 npm run build
 npm run typecheck
+npm run ci
 ```
+
+## Instalação
+
+Na raiz do projeto:
+
+```bash
+nvm use
+npm install
+```
+
+O `postinstall` da raiz já regenera automaticamente o Prisma Client da API no layout de workspace.
 
 ## Backend
 
 ```bash
-cd apps/api
-nvm use
-npm install
-cp .env.example .env
-npm run prisma:generate
-npm run prisma:migrate
-npm run prisma:seed
-npm run start:dev
+cp apps/api/.env.example apps/api/.env
+npm run prisma:generate -w @task-teams/api
+npm run prisma:migrate -w @task-teams/api
+npm run prisma:seed -w @task-teams/api
+npm run start:api
 ```
 
 API disponível em:
@@ -228,12 +252,11 @@ npm run seed
 Em outro terminal:
 
 ```bash
-cd apps/mobile
-nvm use
-npm install
-cp .env.example .env
-npm run start
+cp apps/mobile/.env.example apps/mobile/.env
+npm run ios -w @task-teams/mobile
 ```
+
+O app mobile foi configurado para uso com **development build**. O fluxo oficial de avaliação não usa Expo Go, porque o offline-first depende de `react-native-mmkv` nativo.
 
 URLs de API por ambiente:
 
@@ -244,14 +267,19 @@ URLs de API por ambiente:
 Para sobrescrever:
 
 ```bash
-EXPO_PUBLIC_API_URL="http://192.168.0.10:3000/api" npm run start
+EXPO_PUBLIC_API_URL="http://192.168.0.10:3000/api" npm run start:mobile
 ```
 
-Para rodar iOS nativo:
+Depois que o build nativo estiver instalado no simulador/dispositivo, inicie o bundler com:
 
 ```bash
-cd apps/mobile
-npm run ios
+npm run start:mobile
+```
+
+Para Android nativo:
+
+```bash
+npm run android -w @task-teams/mobile
 ```
 
 Se precisar instalar pods manualmente:
@@ -264,11 +292,11 @@ pod install --repo-update
 ## Ordem recomendada para avaliação
 
 1. `nvm use` na raiz
-2. instalar dependências da API
+2. instalar dependências na raiz com `npm install`
 3. rodar migration e seed
 4. subir a API
-5. instalar dependências do mobile
-6. iniciar o app
+5. compilar o app nativo
+6. iniciar o bundler
 7. validar fluxos de times, tarefas, filtros, edição, status e deleção
 
 ## Seeds e reprodutibilidade local
@@ -416,9 +444,10 @@ Erro:
 
 Validações principais do projeto:
 
-- `apps/api`: `npm test`
-- `apps/api`: `npm run build`
-- `apps/mobile`: `npm run typecheck`
+- raiz: `npm run lint`
+- raiz: `npm run test`
+- raiz: `npm run build`
+- raiz: `npm run typecheck`
 
 ## O que faria diferente em produção
 
@@ -451,6 +480,28 @@ Use Node 22 LTS:
 
 ```bash
 nvm use
+```
+
+### Expo tenta observar `node_modules` inexistente
+
+O projeto usa monorepo com `npm workspaces` e um `metro.config.js` dedicado em `apps/mobile` para resolver módulos a partir da raiz e do app. Se aparecer erro parecido com `ENOENT ... watch '/.../node_modules'`, confirme:
+
+```bash
+nvm use
+npm install
+```
+
+Depois reinicie o bundler.
+
+### Expo Go abre, mas o app falha com `NitroModules`
+
+Esse projeto usa `react-native-mmkv` 4.x para persistencia offline, o que exige modulo nativo disponivel no app compilado. Por isso, **Expo Go nao e o alvo suportado** para avaliacao funcional completa.
+
+Use o fluxo abaixo:
+
+```bash
+npm run ios -w @task-teams/mobile
+npm run start:mobile
 ```
 
 ### Mobile não conecta no backend
